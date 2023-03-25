@@ -3,10 +3,17 @@ import { List, ListWrapper } from './ContactList.styled';
 import Contact from 'components/Contact';
 import { deleteContact, getContacts } from 'redux/contactsSlice';
 import { useSelector, useDispatch } from 'react-redux';
+import { getFilter } from 'redux/filtersSlice';
 
 const ContactList = () => {
   const dispatch = useDispatch();
-  const filteredContacts = useSelector(getContacts);
+  const contacts = useSelector(getContacts);
+  const filterValue = useSelector(getFilter);
+  const onFilterChange = () => {
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filterValue)
+    );
+  };
 
   const onDeleteContact = id => {
     dispatch(deleteContact(id));
@@ -15,7 +22,7 @@ const ContactList = () => {
   return (
     <ListWrapper>
       <List>
-        {filteredContacts.map(({ id, name, number }) => (
+        {onFilterChange().map(({ id, name, number }) => (
           <li key={id}>
             <Contact
               id={id}

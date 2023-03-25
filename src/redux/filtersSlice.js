@@ -4,18 +4,19 @@ const initialStateFilters = {
   filter: '',
 };
 
-export const filtersSlice = createSlice({
+const filtersSlice = createSlice({
   name: 'filter',
   initialState: initialStateFilters,
 
   reducers: {
     setFilter: {
       reducer(state, action) {
-        state = action.payload.toLowerCase();
+        state.filter = action.payload.toLowerCase();
       },
     },
   },
 });
 
 export const { setFilter } = filtersSlice.actions;
+export const getFilter = state => state.filter.filter;
 export const filterReducer = filtersSlice.reducer;
