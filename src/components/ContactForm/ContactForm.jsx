@@ -1,7 +1,4 @@
 import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
-import { addContact, getContacts } from 'redux/contactsSlice';
-
 import { yupResolver } from '@hookform/resolvers/yup'; // for React-hook-form work with Yup
 import * as yup from 'yup'; // Form validation
 import {
@@ -12,7 +9,10 @@ import {
   Form,
   Input,
 } from './ContactForm.styled';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from 'redux/contactsSlice';
+import { nanoid } from 'nanoid';
+import { getContacts } from 'redux/selectors';
 
 const schema = yup.object().shape({
   name: yup.string().required(),
@@ -28,7 +28,6 @@ const schema = yup.object().shape({
 export function ContactForm() {
   const dispatch = useDispatch();
   const contacts = useSelector(getContacts);
-
   const {
     register,
     handleSubmit,
@@ -38,12 +37,12 @@ export function ContactForm() {
     defaultValues: { name: '', number: '' },
     resolver: yupResolver(schema),
   });
-  const onSubmit = ({ name, number }) => {
-    if (contacts.some(contact => contact.name === name)) {
-      alert(`${name} is already in contacts.`);
+  const onSubmit = data => {
+    if (contacts.find(contact => contact.name === data.name)) {
+      alert('contact already in list');
       return;
     }
-    dispatch(addContact({ name, number }));
+    dispatch(addContact({ ...data, id: nanoid(6) }));
     reset();
   };
 
@@ -89,9 +88,5 @@ export function ContactForm() {
     </Form>
   );
 }
-
-ContactForm.propTypes = {
-  addContact: PropTypes.func.isRequired,
-};
 
 export default ContactForm;
